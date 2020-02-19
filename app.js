@@ -26,12 +26,12 @@ app.get('/location', (request, respond) => {
 
     //update state so it is accessible in oither routes
     lat = cityData.geometry.location.lat;
-    lng = cityData.geometry.location.long;
+    lng = cityData.geometry.location.lng;
   
     respond.json({
         formattedQuery: cityData.formatted_address,
         latitude: cityData.geometry.location.lat,
-        longitutde: cityData.geometry.location.long,
+        longitutde: cityData.geometry.location.lng,
     });
 });
 
@@ -54,6 +54,7 @@ app.get('./weather', (req, res) => {
     res.json(portlandWeather);
 });
 
+//404 route must be at the end of the routes or the route will default here. 
 app.get('*', (request, respond) => {
     respond.send('404');
 });
