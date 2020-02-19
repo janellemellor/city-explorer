@@ -1,22 +1,27 @@
 const express = require('express');
 const geoData = require('./geo.js');
-const weatherData = require('./darksky.js')
+const weatherData = require('./darksky.js');
 const app = express();
 // const request = require('superagent');
-const port = process.env.PORT || 3000;
+// const port = process.env.PORT || 3000;
 
 // console.log(data)
 
-//set state
+//set state of lat and long so it can be used globally
 let lat;
 let lng;
 
+
+
+
 app.get('/location', (request, respond) => {
+    //get location from query params
     const location = request.query.search;
 
-    //will use this when we hit the API
+    //will use this when we actually hit the API
     console.log('using location...', location);
 
+    //using the hardcoded geo data
     const cityData = geoData.results[0];
 
     //update state so it is accessible in oither routes
@@ -49,6 +54,9 @@ app.get('./weather', (req, res) => {
     res.json(portlandWeather);
 });
 
+app.get('*', (request, respond) => {
+    respond.send('404');
+});
 
 
 
