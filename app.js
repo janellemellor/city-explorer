@@ -1,6 +1,6 @@
 const express = require('express');
 // const geoData = require('./geo.js');
-const weatherData = require('./darksky.js');
+// const weatherData = require('./darksky.js');
 const app = express();
 const request = require('superagent');
 const port = process.env.PORT || 3000;
@@ -62,8 +62,11 @@ app.get('/location', async(req, res, next) => {
    
 
 //will use lat and lng below when we hit the api
-const getWeatherData = (lat, lng) => {
-    return weatherData.daily.data.map(forecast => {
+const getWeatherData = async(lat, lng) => {
+   
+    const weather = await request.get(`https://api.darksky.net/forecast/${process.env.WEATHER_API_KEY}/${lat},${lng}`);
+
+    return weather.body.daily.data.map(forecast => {
         return {
             forecast: forecast.summary,
             //new Data is standard. Time is in seconds in API so must convert
@@ -72,13 +75,28 @@ const getWeatherData = (lat, lng) => {
     });
 };
 
-app.get('/weather', (req, res) => {
+app.get('/weather', async(req, res, next) => {
+    try {
     //use the lat and lng from earlier to get weather data for the selected area
-    const portlandWeather = getWeatherData(lat, lng); 
+        const portlandWeather = await getWeatherData(lat, lng); 
 
     //res.json that weather data in the appropriate form
-    res.json(portlandWeather);
+        res.json(portlandWeather);
+    } catch (err) {
+        next(err);
+    }
 });
+
+app.get('/restaurants', async(req, res, next) => {
+    try {
+        const getRestaurants = await request.get(`https://api.yelp.com/v3/businesses/search?term=restaurants&latitude=${lat}&longitude=${lng}`).set('Authorization', `Bearer ${process.env.YELP_API_KEY}`);
+
+        res.json(getRestaurants.body);
+
+    } catch (err) {
+        next(err);
+    }
+})
 
 //404 route must be at the end of the routes or the route will default here. 
 app.get('*', (request, respond) => {
