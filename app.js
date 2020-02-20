@@ -114,6 +114,40 @@ app.get('/restaurants', async(req, res, next) => {
     }
 });
 
+
+const getTrailData = async(lat, lng) => {
+   
+    const trails = await request.get(`https://www.hikingproject.com/data/get-trails?lat=${lat}&lon=${lng}&maxDistance=10&key=${process.env.TRAIL_API_KEY}`);
+
+    return trails.body.trails.map(trail => {
+        const conditionDateAndTimeArray = trail.conditionDate.split(' ');
+
+        return {
+            name: trail.name,
+            location: trail.location,
+            length: trail['length'],
+            stars: trail.stars,
+            star_votes: trail.starVotes,
+            summary:trail.summary,
+            trail_url: trail.url,
+            conditions: trail.conditionDetails,
+            condition_date: conditionDateAndTimeArray[0],
+            condition_time: conditionDateAndTimeArray[1],
+        };
+    });
+};
+
+
+app.get('/trails', async(req, res, next) => {
+    try {
+        const findTrails = await getTrailData(lat, lng);
+        res.json(findTrails);
+
+    } catch (err) {
+        next(err);
+    }
+});
+
 //404 route must be at the end of the routes or the route will default here. 
 app.get('*', (request, respond) => {
     respond.send('404');
