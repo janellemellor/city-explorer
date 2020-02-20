@@ -87,16 +87,32 @@ app.get('/weather', async(req, res, next) => {
     }
 });
 
+
+const getYelpData = async(lat, lng) => {
+   
+    const restaurants = await request.get(`https://api.yelp.com/v3/businesses/search?term=restaurants&latitude=${lat}&longitude=${lng}`).set('Authorization', `Bearer ${process.env.YELP_API_KEY}`);
+
+    return restaurants.body.businesses.map(business => {
+        return {
+            name: business.name,
+            image_url: business.image_url,
+            price: business.price,
+            rating: business.rating,
+            url: business.url,
+        };
+    });
+};
+
+
 app.get('/restaurants', async(req, res, next) => {
     try {
-        const getRestaurants = await request.get(`https://api.yelp.com/v3/businesses/search?term=restaurants&latitude=${lat}&longitude=${lng}`).set('Authorization', `Bearer ${process.env.YELP_API_KEY}`);
-
-        res.json(getRestaurants.body);
+        const getReviews = await getYelpData(lat, lng);
+        res.json(getReviews);
 
     } catch (err) {
         next(err);
     }
-})
+});
 
 //404 route must be at the end of the routes or the route will default here. 
 app.get('*', (request, respond) => {
