@@ -148,6 +148,32 @@ app.get('/trails', async(req, res, next) => {
     }
 });
 
+const getEventData = async(lat, lng) => {
+    const eventURL = await request.get(`http://api.eventful.com/json/events/search?app_key=${process.env.EVENT_API_KEY}&where=${lat},${lng}&within=25&page_size=20&page_number=1`);
+    
+    const nearbyEvents = JSON.parse(eventURL.text);
+
+    return nearbyEvents.events.event.map(event => {
+        const eventDateAndTimeArray = event.start_time.split(' ');
+        return {
+            link: event.url,
+            name: event.title, 
+            event_date: eventDateAndTimeArray[0], 
+            summary: event.description === null ? 'no description provided' : event.description
+        };
+    });
+};
+
+app.get('/events', async(req, res, next) => {
+    try {
+        const findEvents = await getEventData(lat, lng);
+        res.json(findEvents);
+
+    } catch (err) {
+        next(err);
+    }
+});
+
 //404 route must be at the end of the routes or the route will default here. 
 app.get('*', (request, respond) => {
     respond.send('404');
