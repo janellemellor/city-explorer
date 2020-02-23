@@ -29,8 +29,6 @@ app.get('/location', async(req, res, next) => {
         const cityData = await request.get(URL);
         const firstResult = cityData.body[0];
 
-        console.log(cityData.body);
-
         lat = firstResult.lat;
         lng = firstResult.lon;
 

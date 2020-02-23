@@ -65,14 +65,7 @@ describe('testing endpoints', () => {
         async(done) => {
             const response = await request(app).get('/restaurants');
 
-            expect(response.body).toEqual([
-                {
-                    name: expect.any(String),
-                    image_url: expect.any(String),
-                    price: expect.any(String),
-                    rating: expect.any(Number),
-                    url: expect.any(String),
-                },
+            expect(response.body[0]).toEqual(
                 {
                     name: expect.any(String),
                     image_url: expect.any(String),
@@ -80,7 +73,7 @@ describe('testing endpoints', () => {
                     rating: expect.any(Number),
                     url: expect.any(String),
                 }
-            ]);
+            );
 
             expect(response.statusCode).toBe(200);
 
@@ -91,7 +84,7 @@ describe('testing endpoints', () => {
         async(done) => {
             const response = await request(app).get('/trails');
 
-            expect(response.body).toEqual([
+            expect(response.body[0]).toEqual(
                 {
                     name: expect.any(String),
                     location: expect.any(String),
@@ -100,29 +93,29 @@ describe('testing endpoints', () => {
                     star_votes: expect.any(Number),
                     summary: expect.any(String),
                     trail_url: expect.any(String),
-                    conditions: expect.any(String),
+                    conditions: null,
                     condition_date: expect.any(String),
                     condition_time: expect.any(String),
                 }
-            ]);
+            );
 
             expect(response.statusCode).toBe(200);
 
             done();    
         });  
         
-    test('test eventss endpoint',
+    test('test events endpoint',
         async(done) => {
             const response = await request(app).get('/events');
 
-            expect(response.body).toEqual([
+            expect(response.body[0]).toEqual(
                 {
                     link: expect.any(String),
                     name: expect.any(String), 
                     event_date: expect.any(String), 
                     summary: expect.any(String)
                 }
-            ]);
+            );
 
             expect(response.statusCode).toBe(200);
 
