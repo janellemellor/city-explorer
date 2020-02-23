@@ -1,9 +1,6 @@
 const express = require('express');
-// const geoData = require('./geo.js');
-// const weatherData = require('./darksky.js');
 const app = express();
 const request = require('superagent');
-const port = process.env.PORT || 3000;
 require('dotenv').config();
 
 //middleware - shoving things onto the request
@@ -59,8 +56,6 @@ app.get('/location', async(req, res, next) => {
         //     latitude: cityData.geometry.location.lat,
         //     longitutde: cityData.geometry.location.lng,
         
-   
-
 //will use lat and lng below when we hit the api
 const getWeatherData = async(lat, lng) => {
    
@@ -179,6 +174,7 @@ app.get('*', (request, respond) => {
     respond.send('404');
 });
 
+module.exports = {
+    app: app
+};
 
-
-app.listen(port, () => {console.log('running ...')})
